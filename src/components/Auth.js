@@ -15,18 +15,18 @@ export const Auth = ({ onGuestSignIn }) => {
       await setPersistence(auth, browserLocalPersistence);
       const result = await signInWithPopup(auth, provider);
       if (result.user) {
-        navigate('/room-manager'); // Redirect to RoomManager after Google sign-in
+        navigate('/room-manager');
       }
     } catch (error) {
       console.error('Error during sign-in:', error);
     }
   };
 
-  // Handle guest username and navigate to RoomManager
   const handleGuestSignIn = () => {
+    console.log('handleGuestSignIn', guestUsername)
     if (guestUsername) {
-      onGuestSignIn(guestUsername);  // Pass the guest username to RoomManager
-      navigate('/room-manager'); // Redirect to RoomManager
+      onGuestSignIn(guestUsername);
+      navigate('/room-manager');
     } else {
       alert("Please enter a username");
     }

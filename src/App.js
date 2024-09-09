@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Route, Routes, useNavigate } from 'react-router-dom';
 
-import { auth, db } from './firebase-config';
+import { auth } from './firebase-config';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
-import { doc, getDoc } from 'firebase/firestore';
 
 import './styles/App.css';
 import { Auth } from './components/Auth';
@@ -21,25 +20,19 @@ function App() {
     const unsubscribe = onAuthStateChanged(auth, async (authUser) => {
       if (authUser) {
         setUser(authUser);
-
-        const userDoc = doc(db, "users", authUser.uid);
-        const userSnapshot = await getDoc(userDoc);
-
-        if (userSnapshot.exists()) {
-          setRoom(userSnapshot.data().roomCode);
-          navigate('/chat');
-        } else {
-          navigate('/room-manager');
-        }
+        navigate('/room-manager');
+      } else if (guestUsername) { // Check if guest is logged in
+        navigate('/room-manager');
       } else {
+        console.log('Not authenticated and no guest detected');
+        if (window.location.pathname !== '/') navigate('/');
         setUser(null);
         setRoom(null);
-        navigate('/');
       }
     });
-
+  
     return () => unsubscribe();
-  }, [navigate]);
+  }, [navigate, guestUsername]); // Add guestUsername to the dependency array
 
   const handleGuestSignIn = (guestUsername) => {
     setGuestUsername(guestUsername);
@@ -48,10 +41,13 @@ function App() {
 
   const handleSignOut = async () => {
     try {
-      await signOut(auth);
-      setUser(null);
-      setRoom(null);
+      if (user) {
+        await signOut(auth);
+        setUser(null);
+      }
+
       setGuestUsername("");
+      setRoom(null);
       navigate('/');
     } catch (error) {
       console.error("Error signing out: ", error);

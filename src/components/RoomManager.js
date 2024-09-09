@@ -9,12 +9,12 @@ export const RoomManager = ({ user, guestUsername, onRoomCreated, onSignOut }) =
   const navigate = useNavigate();
 
   const handleCreateRoom = async () => {
-    if (user) { // Ensure only users can create rooms
+    if (user) { // Ensure only signed-in users can create rooms
       const newRoomCode = Math.random().toString(36).substring(2, 7).toUpperCase();
       try {
         await setDoc(doc(db, "rooms", newRoomCode), {
-          host: user.displayName,
-          createdAt: serverTimestamp()
+          host: user?.displayName || "Unknown Host",  // Optional chaining to handle null user
+          createdAt: serverTimestamp(),
         });
 
         const userDoc = doc(db, "users", user.uid);
@@ -39,59 +39,56 @@ export const RoomManager = ({ user, guestUsername, onRoomCreated, onSignOut }) =
 
         if (roomDoc.exists()) {
           if (user) {
-            // If user is signed in, handle normally
             navigate('/chat');
           } else if (guestUsername) {
-            // If guest username is provided
             await addDoc(collection(db, "rooms", roomCode, "guests"), {
               username: guestUsername,
-              joinedAt: serverTimestamp()
+              joinedAt: serverTimestamp(),
             });
             navigate('/chat');
           } else {
             alert("Please enter a username to join as a guest.");
           }
         } else {
-          alert("Room code does not exist");
+          alert("Room code does not exist.");
         }
       } catch (error) {
         console.error("Error joining room: ", error);
       }
     } else {
-      alert("Please enter a room code");
+      alert("Please enter a room code.");
     }
   };
 
   return (
     <div className='room-manager'>
       <div>
-        <h2>{user.displayName}</h2>
-      {user ? ( // Only show the "Create Room" button if a user is signed in
-        <>
-          <button className='create-room-button' onClick={handleCreateRoom}>Create Room</button>
-        </>
-      ) : (
-        <p>Please sign in to create a room.</p>
-      )} 
-      {user && (
-        <div className="user-info">
-          <button className='sign-out-button' onClick={onSignOut}>Sign Out</button>
-        </div>
-      )}
+        <h2>{user?.displayName || guestUsername || "Guest"}</h2>
+        {user ? (
+          <>
+            <button className='create-room-button' onClick={handleCreateRoom}>Create Room</button>
+          </>
+        ) : (
+          <p className='disclaimer'>(Please sign in to create a room.)</p>
+        )}
+        {(user || guestUsername) && (
+          <div className="user-info">
+            <button className='sign-out-button' onClick={onSignOut}>Sign Out</button>
+          </div>
+        )}
       </div>
       <div>
-      <h2>Join A Room</h2>
-      <form onSubmit={handleJoinRoom}>
-        <input
-          type="text"
-          placeholder="Enter Room Code"
-          value={roomCode}
-          onChange={(e) => setRoomCode(e.target.value)}
-        />
-        <button className='join-room-button' type="submit">Join Room</button>
-      </form>
+        <h2>Join A Room</h2>
+        <form onSubmit={handleJoinRoom}>
+          <input
+            type="text"
+            placeholder="Enter Room Code"
+            value={roomCode}
+            onChange={(e) => setRoomCode(e.target.value)}
+          />
+          <button className='join-room-button' type="submit">Join Room</button>
+        </form>
       </div>
-
     </div>
   );
 };

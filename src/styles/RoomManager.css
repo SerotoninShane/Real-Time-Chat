@@ -61,6 +61,12 @@
     color: #bbb;
   }
 
+  .room-manager .disclaimer {
+    color: #bbb;
+    font-size: .7rem;
+    margin-block: 1rem;
+  }
+
   .room-manager .create-room-button {
     margin-block: 1rem;
   }
