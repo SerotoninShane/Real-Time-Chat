@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './App.css';
 import { Auth } from "./components/Auth";
+import { Chat } from "./components/Chat";
 import { auth } from './firebase-config';  // Firebase auth configuration
 import { onAuthStateChanged, signOut } from 'firebase/auth';
 
@@ -8,6 +9,9 @@ function App() {
   // State to store the signed-in user and their ID token
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(null);
+  const [room, setRoom] = useState(null);
+
+  const roomInputRef = useRef(null)
 
   // Effect to check if a user is already signed in when the component mounts
   useEffect(() => {
@@ -55,20 +59,22 @@ function App() {
     }
     
     // If a user is signed in, show user information
-    return (
+    return ( room ? <Chat room={room}/> :
       <div>
         <h2>Welcome, {user.displayName}!</h2>
         <p>Email: {user.email}</p>
         <button onClick={handleSignOut}>Sign Out</button>
+        <div className='room'>
+          <input ref={roomInputRef} placeholder='Enter Room Name'></input>
+          <button onClick={()=> setRoom(roomInputRef.current.value)}>Enter Room</button>
+        </div>
       </div>
     );
   };
 
   return (
     <div className="App">
-      <header className="App-header">
         {renderUserAuthSection()}
-      </header>
     </div>
   );
 }
