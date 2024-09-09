@@ -1,30 +1,56 @@
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import '../styles/Auth.css';
+
 import { auth, provider } from "../firebase-config.js";
 import { signInWithPopup, setPersistence, browserLocalPersistence } from 'firebase/auth';
-import { useState, useEffect } from 'react';
 
-export const Auth = ({ onSignIn }) => {
-    const signInWithGoogle = async () => {
-        try {
-            // Set persistence to 'local' so the user stays signed in
-            await setPersistence(auth, browserLocalPersistence);
+export const Auth = ({ onGuestSignIn }) => {
+  const [guestUsername, setGuestUsername] = useState('');
+  const navigate = useNavigate();
 
-            // Sign in the user
-            const result = await signInWithPopup(auth, provider);
+  // Google sign-in
+  const signInWithGoogle = async () => {
+    try {
+      await setPersistence(auth, browserLocalPersistence);
+      const result = await signInWithPopup(auth, provider);
+      if (result.user) {
+        navigate('/room-manager'); // Redirect to RoomManager after Google sign-in
+      }
+    } catch (error) {
+      console.error('Error during sign-in:', error);
+    }
+  };
 
-            // Get the user's ID token
-            const idToken = await result.user.getIdToken();
+  // Handle guest username and navigate to RoomManager
+  const handleGuestSignIn = () => {
+    if (guestUsername) {
+      onGuestSignIn(guestUsername);  // Pass the guest username to RoomManager
+      navigate('/room-manager'); // Redirect to RoomManager
+    } else {
+      alert("Please enter a username");
+    }
+  };
 
-            // Pass the user data and token back to the parent (App component)
-            onSignIn(result.user, idToken);
+  return (
+    <section className="auth">
 
-        } catch (error) {
-            console.error('Error during sign-in:', error);
-        }
-    };
+      <div>
+        <h3>Play As Guest</h3>
+        <input
+          type="text"
+          placeholder="Enter Username"
+          value={guestUsername}
+          onChange={(e) => setGuestUsername(e.target.value)}
+        />
+        <button onClick={handleGuestSignIn}>Continue as Guest</button>
+      </div>
 
-    return (
-        <section className="auth">
-            <button onClick={signInWithGoogle}>Sign In With Google</button>
-        </section>
-    );
+      <div>
+        <h3>Host And Play</h3>
+        <button className="google-button" onClick={signInWithGoogle}>Sign In With Google</button>
+      </div>
+
+    </section>
+  );
 };

@@ -1,80 +1,95 @@
-import React, { useState, useEffect, useRef } from 'react';
-import './App.css';
-import { Auth } from "./components/Auth";
-import { Chat } from "./components/Chat";
-import { auth } from './firebase-config';  // Firebase auth configuration
+import React, { useState, useEffect } from 'react';
+import { Route, Routes, useNavigate } from 'react-router-dom';
+
+import { auth, db } from './firebase-config';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
+import { doc, getDoc } from 'firebase/firestore';
+
+import './styles/App.css';
+import { Auth } from './components/Auth';
+import { RoomManager } from './components/RoomManager';
+import { Chat } from './components/Chat';
 
 function App() {
-  // State to store the signed-in user and their ID token
   const [user, setUser] = useState(null);
-  const [token, setToken] = useState(null);
   const [room, setRoom] = useState(null);
+  const [guestUsername, setGuestUsername] = useState("");
 
-  const roomInputRef = useRef(null)
+  const navigate = useNavigate();
 
-  // Effect to check if a user is already signed in when the component mounts
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        // If the user is signed in, retrieve their ID token
-        const idToken = await user.getIdToken();
-        setUser(user);
-        setToken(idToken);
+    const unsubscribe = onAuthStateChanged(auth, async (authUser) => {
+      if (authUser) {
+        setUser(authUser);
+
+        const userDoc = doc(db, "users", authUser.uid);
+        const userSnapshot = await getDoc(userDoc);
+
+        if (userSnapshot.exists()) {
+          setRoom(userSnapshot.data().roomCode);
+          navigate('/chat');
+        } else {
+          navigate('/room-manager');
+        }
       } else {
-        // If no user is signed in, clear the state
         setUser(null);
-        setToken(null);
+        setRoom(null);
+        navigate('/');
       }
     });
 
-    // Cleanup subscription when the component unmounts
     return () => unsubscribe();
-  }, []);
+  }, [navigate]);
 
-  // Function to handle sign-in, passed to the Auth component
-  const handleSignIn = (userData, userToken) => {
-    setUser(userData);  // Update the user state with the signed-in user's info
-    setToken(userToken);  // Store the user's token
+  const handleGuestSignIn = (guestUsername) => {
+    setGuestUsername(guestUsername);
+    navigate('/room-manager');
   };
 
-    // Function to handle sign-out
-    const handleSignOut = () => {
-      signOut(auth)  // Firebase method to sign out the user
-        .then(() => {
-          // Reset user and token states
-          setUser(null);
-          setToken(null);
-        })
-        .catch((error) => {
-          console.error("Error signing out: ", error);
-        });
-    };
-  
-
-  const renderUserAuthSection = () => {
-    if (!user) {
-      // If no user is signed in, show the Auth component
-      return <Auth onSignIn={handleSignIn} />;
+  const handleSignOut = async () => {
+    try {
+      await signOut(auth);
+      setUser(null);
+      setRoom(null);
+      setGuestUsername("");
+      navigate('/');
+    } catch (error) {
+      console.error("Error signing out: ", error);
     }
-    
-    // If a user is signed in, show user information
-    return ( room ? <Chat room={room}/> :
-      <div>
-        <h2>Welcome, {user.displayName}!</h2>
-        <p>Email: {user.email}</p>
-        <button onClick={handleSignOut}>Sign Out</button>
-        <div className='room'>
-          <input ref={roomInputRef} placeholder='Enter Room Name'></input>
-          <button onClick={()=> setRoom(roomInputRef.current.value)}>Enter Room</button>
-        </div>
-      </div>
-    );
+  };
+
+  const handleRoomDelete = () => {
+    setRoom(null);
+    setGuestUsername("");
+    navigate('/');
   };
 
   return (
     <div className="App">
-        {renderUserAuthSection()}
+      <Routes>
+
+      <Route path="/" element={
+        <Auth onSignIn={() => {}}
+        onGuestSignIn={handleGuestSignIn} />} 
+      />
+
+      <Route path="/room-manager" element={
+        <RoomManager user={user}
+        onRoomCreated={setRoom}
+        onSignOut={handleSignOut}
+        guestUsername={guestUsername} />} 
+      />
+
+      <Route path="/chat" element={
+        <Chat
+          room={room}
+          user={user}
+          guest={guestUsername}
+          onRoomDelete={handleRoomDelete}
+        />}
+      />
+
+      </Routes>
     </div>
   );
 }

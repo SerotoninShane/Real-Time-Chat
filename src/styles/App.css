@@ -1,0 +1,29 @@
+@font-face {
+  font-family: 'Fox';
+  src: url('Fonts/FoxAndBower.otf') format('opentype');
+}
+
+@font-face {
+  font-family: 'Sonora';
+  src: url('Fonts/Sonorous-Rough.otf') format('opentype');
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+
+body {
+  background-color: #121212; /* Dark background color */
+  color: #e0e0e0; /* Light text color */
+}
+
+/* Styling for the App container */
+.App {
+  display: grid;
+  place-items: center;
+  min-height: 100vh;
+  font-family: 'Fox', sans-serif;
+}

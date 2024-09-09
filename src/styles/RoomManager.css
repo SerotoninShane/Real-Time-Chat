@@ -13,8 +13,8 @@
     padding: 0;
     box-sizing: border-box;
   }
-  
-  .auth {
+
+  .room-manager {
     background-color: #1e1e1e;
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -26,9 +26,8 @@
     width: 100%;
     text-align: center;
   }
-  
-  /* Button styling */
-  .auth button {
+
+  .room-manager button {
     font-family: 'Fox', sans-serif;
     color: #ffffff;
     border: none;
@@ -41,12 +40,12 @@
 
     background-color: #6d0000;
   }
-  
-  .auth button:hover {
+
+  .room-manager button:hover {
     transform: scale(1.05);
   }
-  
-  .auth input {
+
+  .room-manager input {
     font-family: 'Sonora', sans-serif;
     width: 80%;
     padding: 1rem;
@@ -58,21 +57,10 @@
     color: #fff;
   }
   
-  .auth input::placeholder {
+  .room-manager input::placeholder {
     color: #bbb;
   }
-  
-  .auth h3 {
-    margin-top: 0;
-    color: #ffffff;
-  }
 
- .auth .google-button {
-    margin: 1vh;
+  .room-manager .create-room-button {
+    margin-block: 1rem;
   }
-
-  .google-icon {
-    font-size: 20px; /* Adjust size as needed */
-    margin-right: 0.5rem;
-  }
-
