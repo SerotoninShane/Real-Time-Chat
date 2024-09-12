@@ -13,9 +13,7 @@ export const useRoomListeners = (room, navigate) => {
     if (!room || !roomDocRef) return;
 
     const unsubscribeRoom = onSnapshot(roomDocRef, (snapshot) => {
-      if (snapshot.exists()) {
-        // const data = snapshot.data();
-      } else {
+      if (!snapshot.exists()) {
         alert("The room has been deleted by the host.");
         navigate('/roomBuilder'); // Redirect to roomBuilder when the room is deleted
       }

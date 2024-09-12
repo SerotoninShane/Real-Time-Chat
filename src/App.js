@@ -10,7 +10,6 @@ import { RoomBuilder } from './components/RoomBuilder';
 import { Room } from './components/Room';
 
 function App() {
-  console.log('APP')
   const [user, setUser] = useState(null);
   const [room, setRoom] = useState(null);
   const [guestUsername, setGuestUsername] = useState("");
@@ -20,16 +19,10 @@ function App() {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (authUser) => {
       if (authUser && user === null) {
-        // If authUser exists and user is still null, set user
         setUser(authUser);
-        console.log("Going to Room-manager (User Authenticated)");
         if (window.location.pathname !== '/roomBuilder') navigate('/roomBuilder');
-
       } else if (!authUser && !guestUsername && user !== null) {
-        console.log('Not authenticated and no guest detected');
-        if (window.location.pathname !== '/') {
-          navigate('/');
-        }
+        if (window.location.pathname !== '/') navigate('/');
         setUser(null);
         setRoom(null);
       }
@@ -43,7 +36,6 @@ function App() {
   };
 
   const handleSignOut = async () => {
-    console.log('Signing Out');
     try {
       if (user) {
         await signOut(auth);
@@ -65,7 +57,6 @@ function App() {
   };
 
   const handleRoomCreated = (newRoomCode) => {
-    console.log("Room created and received in App:", newRoomCode);
     setRoom(newRoomCode);
     navigate('/room', { state: { roomCode: newRoomCode } });
   };

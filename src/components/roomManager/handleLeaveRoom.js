@@ -1,46 +1,35 @@
-import { doc, getDoc, updateDoc, arrayRemove, deleteDoc } from 'firebase/firestore';
+import { deleteDoc, doc, getDoc, collection, getDocs, deleteDoc as deleteDocInCollection } from 'firebase/firestore';
 import { db } from '../../firebase-config';
+import { handleDeleteRoom } from './handleDeleteRoom';
 
-export const handleLeaveRoom = async (roomCode, user, guestUsername, navigate) => {
-  try {
-    const roomDocRef = doc(db, "rooms", roomCode);
-    const roomSnapshot = await getDoc(roomDocRef);
-
-    if (roomSnapshot.exists()) {
-      const roomData = roomSnapshot.data();
-
-      // Check if there is a user (not the host) leaving the room
-      if (user && roomData.host !== user.displayName) {
-        // Remove authenticated user from the `player` array
-        const player = { username: user.displayName, role: 'user' };
-        await updateDoc(roomDocRef, {
-          player: arrayRemove(player)
-        });
-        console.log("Authenticated user successfully removed from the room.");
-
-        // Remove guest document if exists
-        if (guestUsername) {
+export const handleLeaveRoom = async (roomCode, user, guestUsername) => {
+    try {
+      const roomDocRef = doc(db, "rooms", roomCode);
+      const roomSnapshot = await getDoc(roomDocRef);
+  
+      if (roomSnapshot.exists()) {
+        // Check if the user is the host
+        if (user && roomSnapshot.data().host === user.displayName) {
+          // If the user is the host, delete the room and all guests
+          console.log("Host is leaving, deleting the room...");
+          
+          // Remove all guests
+          const guestsRef = collection(db, "rooms", roomCode, "guests");
+          const guestDocs = await getDocs(guestsRef);
+          guestDocs.forEach(async (doc) => {
+            await deleteDocInCollection(doc.ref);
+          });
+          
+          // Delete the room
+          await handleDeleteRoom(roomCode);
+        } else {
+          // If the user is not the host, remove the guest from the room
           const guestDocRef = doc(db, "rooms", roomCode, "guests", guestUsername);
           await deleteDoc(guestDocRef);
-          console.log("Guest document successfully deleted.");
+          console.log("Guest successfully removed from the room.");
         }
-      } else if (!user && guestUsername) {
-        // Handle case for guests
-        const player = { username: guestUsername, role: 'guest' };
-        await updateDoc(roomDocRef, {
-          player: arrayRemove(player)
-        });
-        console.log("Guest successfully removed from the room.");
-
-        // Remove guest document from the collection
-        const guestDocRef = doc(db, "rooms", roomCode, "guests", guestUsername);
-        await deleteDoc(guestDocRef);
       }
-
-      // Redirect to the RoomBuilder
-      navigate('/roomBuilder'); // Ensure this path matches your RoomBuilder route
+    } catch (error) {
+      console.error("Error leaving room:", error);
     }
-  } catch (error) {
-    console.error("Error leaving room:", error);
-  }
-};
+  };

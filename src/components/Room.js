@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { handleLeaveRoom, handleDeleteRoom, PlayerList, usePlayers, useRoomListeners, useWindowClose } from './roomManager';
+import Game from './Game';
 import '../styles/Room.css';
 
 export const Room = ({ user, guest, onRoomDelete }) => {
@@ -8,6 +9,7 @@ export const Room = ({ user, guest, onRoomDelete }) => {
   const navigate = useNavigate();
   const [roomCode, setRoomCode] = useState('');
   const [hostName, setHostName] = useState('');
+  const [gameStarted, setGameStarted] = useState(false);
 
   useEffect(() => {
     if (location.state?.roomCode) {
@@ -18,8 +20,10 @@ export const Room = ({ user, guest, onRoomDelete }) => {
 
   const { players, loading } = usePlayers(roomCode);
 
+  const isHost = user && user.displayName === hostName;
+
   useRoomListeners(roomCode, navigate);
-  useWindowClose(() => handleLeaveRoom(roomCode, user, guest));
+  useWindowClose(() => handleLeave(roomCode, user, guest, navigate), isHost);
 
   const handleLeave = async () => {
     await handleLeaveRoom(roomCode, user, guest, navigate);
@@ -27,8 +31,13 @@ export const Room = ({ user, guest, onRoomDelete }) => {
   };
 
   const handleDelete = async () => {
-    await handleDeleteRoom(roomCode, navigate);
+    await handleDeleteRoom(roomCode);
     if (onRoomDelete) onRoomDelete();
+  };
+
+  const startGame = () => {
+    setGameStarted(true);
+    console.log('Game started!');
   };
 
   return roomCode ? (
@@ -45,9 +54,19 @@ export const Room = ({ user, guest, onRoomDelete }) => {
         </button>
       ) : null}
       {user && user.displayName === hostName && (
-        <button onClick={handleDelete} className="delete-room-button">
-          Delete Room
-        </button>
+        <>
+          <button onClick={handleDelete} className="delete-room-button">
+            Delete Room
+          </button>
+          {!gameStarted && (
+            <button onClick={startGame} className="start-game-button">
+              Start Game
+            </button>
+          )}
+        </>
+      )}
+      {gameStarted && (
+        <Game roomCode={roomCode} hostName={hostName} currentUser={user} />
       )}
     </div>
   ) : (
