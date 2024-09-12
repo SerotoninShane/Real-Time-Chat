@@ -14,7 +14,7 @@
     box-sizing: border-box;
   }
 
-  .room-manager {
+  .roomBuilder {
     background-color: #1e1e1e;
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -27,7 +27,7 @@
     text-align: center;
   }
 
-  .room-manager button {
+  .roomBuilder button {
     font-family: 'Fox', sans-serif;
     color: #ffffff;
     border: none;
@@ -41,11 +41,11 @@
     background-color: #6d0000;
   }
 
-  .room-manager button:hover {
+  .roomBuilder button:hover {
     transform: scale(1.05);
   }
 
-  .room-manager input {
+  .roomBuilder input {
     font-family: 'Sonora', sans-serif;
     width: 80%;
     padding: 1rem;
@@ -57,16 +57,16 @@
     color: #fff;
   }
   
-  .room-manager input::placeholder {
+  .roomBuilder input::placeholder {
     color: #bbb;
   }
 
-  .room-manager .disclaimer {
+  .roomBuilder .disclaimer {
     color: #bbb;
     font-size: .7rem;
     margin-block: 1rem;
   }
 
-  .room-manager .create-room-button {
+  .roomBuilder .create-room-button {
     margin-block: 1rem;
   }

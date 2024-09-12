@@ -6,10 +6,11 @@ import { onAuthStateChanged, signOut } from 'firebase/auth';
 
 import './styles/App.css';
 import { Auth } from './components/Auth';
-import { RoomManager } from './components/RoomManager';
-import { Chat } from './components/Chat';
+import { RoomBuilder } from './components/RoomBuilder';
+import { Room } from './components/Room';
 
 function App() {
+  console.log('APP')
   const [user, setUser] = useState(null);
   const [room, setRoom] = useState(null);
   const [guestUsername, setGuestUsername] = useState("");
@@ -17,29 +18,32 @@ function App() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (authUser) => {
-      if (authUser) {
+    const unsubscribe = onAuthStateChanged(auth, (authUser) => {
+      if (authUser && user === null) {
+        // If authUser exists and user is still null, set user
         setUser(authUser);
-        navigate('/room-manager');
-      } else if (guestUsername) { // Check if guest is logged in
-        navigate('/room-manager');
-      } else {
+        console.log("Going to Room-manager (User Authenticated)");
+        if (window.location.pathname !== '/roomBuilder') navigate('/roomBuilder');
+
+      } else if (!authUser && !guestUsername && user !== null) {
         console.log('Not authenticated and no guest detected');
-        if (window.location.pathname !== '/') navigate('/');
+        if (window.location.pathname !== '/') {
+          navigate('/');
+        }
         setUser(null);
         setRoom(null);
       }
     });
   
     return () => unsubscribe();
-  }, [navigate, guestUsername]); // Add guestUsername to the dependency array
+  }, [navigate, guestUsername, user]);
 
   const handleGuestSignIn = (guestUsername) => {
     setGuestUsername(guestUsername);
-    navigate('/room-manager');
   };
 
   const handleSignOut = async () => {
+    console.log('Signing Out');
     try {
       if (user) {
         await signOut(auth);
@@ -55,9 +59,15 @@ function App() {
   };
 
   const handleRoomDelete = () => {
+    console.log('Room Deleted');
     setRoom(null);
-    setGuestUsername("");
-    navigate('/');
+    navigate('/roomBuilder');
+  };
+
+  const handleRoomCreated = (newRoomCode) => {
+    console.log("Room created and received in App:", newRoomCode);
+    setRoom(newRoomCode);
+    navigate('/room', { state: { roomCode: newRoomCode } });
   };
 
   return (
@@ -69,15 +79,16 @@ function App() {
         onGuestSignIn={handleGuestSignIn} />} 
       />
 
-      <Route path="/room-manager" element={
-        <RoomManager user={user}
-        onRoomCreated={setRoom}
-        onSignOut={handleSignOut}
-        guestUsername={guestUsername} />} 
+      <Route path="/roomBuilder" element={
+        <RoomBuilder
+          user={user}
+          onRoomCreated={handleRoomCreated}
+          onSignOut={handleSignOut}
+          guestUsername={guestUsername} />} 
       />
 
-      <Route path="/chat" element={
-        <Chat
+      <Route path="/room" element={
+        <Room
           room={room}
           user={user}
           guest={guestUsername}
