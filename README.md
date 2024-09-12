@@ -22,30 +22,35 @@ Ensure you have the following installed:
 
 ### Steps to Install
 1. Clone this repository:
-   ```bash
-   git clone https://github.com/SerotoninShane/Real-Time-Chat.git
-
-
-1. Navigate to the project directory:
-```cd Real-Time-Chat```
-2. Install the required dependencies:
-```npm install```
+```bash
+git clone https://github.com/SerotoninShane/Real-Time-Chat.git
+```
+2. Navigate to the project directory:
+```bash
+cd Real-Time-Chat
+```
+3. Install the required dependencies:
+```bash
+npm install
+```
 ## Firebase Configuration
 1. Set up a Firebase project on the Firebase Console.
 2. Create a Firestore database and enable Google Authentication.
 3. Set up your Firebase credentials by creating a .env file in the root directory of your project and adding the following:
-```
-    REACT_APP_FIREBASE_API_KEY=your_api_key
-    REACT_APP_FIREBASE_AUTH_DOMAIN=your_auth_domain
-    REACT_APP_FIREBASE_PROJECT_ID=your_project_id
-    REACT_APP_FIREBASE_STORAGE_BUCKET=your_storage_bucket
-    REACT_APP_FIREBASE_MESSAGING_SENDER_ID=your_messaging_sender_id
-    REACT_APP_FIREBASE_APP_ID=your_app_id
+```js
+REACT_APP_FIREBASE_API_KEY=your_api_key
+REACT_APP_FIREBASE_AUTH_DOMAIN=your_auth_domain
+REACT_APP_FIREBASE_PROJECT_ID=your_project_id
+REACT_APP_FIREBASE_STORAGE_BUCKET=your_storage_bucket
+REACT_APP_FIREBASE_MESSAGING_SENDER_ID=your_messaging_sender_id
+REACT_APP_FIREBASE_APP_ID=your_app_id
 ```
 
 ## Running the Application
 1. Start the development server:
-```npm start```
+```bash
+npm start
+```
 2. Open your browser and navigate to http://localhost:3000.
 
 ## Folder Structure
