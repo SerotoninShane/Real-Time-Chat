@@ -1,30 +1,31 @@
-import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/Auth.css';
+import { GoogleSignInButton } from './authManager';
 
-import { GuestSignInButton , GoogleSignInButton } from './authManager';
+import { AudioPlayer } from './AudioPlayer';
 
-export const Auth = ({ onGuestSignIn }) => {
-  const [guestUsername, setGuestUsername] = useState('');
+export const Auth = () => {
   const navigate = useNavigate();
-
+  
   return (
     <section className="auth">
-      <div>
-        <h3>Play As Guest</h3>
-        <input
-          type="text"
-          placeholder="Enter Username"
-          value={guestUsername}
-          onChange={(e) => setGuestUsername(e.target.value)}
-        />
-        <GuestSignInButton guestUsername={guestUsername} onGuestSignIn={onGuestSignIn} navigate={navigate} />
+
+      <div className="main-container">
+        <div></div>
+      <GoogleSignInButton navigate={navigate} />
       </div>
 
-      <div>
-        <h3>Host And Play</h3>
-        <GoogleSignInButton navigate={navigate} />
+      <div className="vinyl">
+        <img src='/vinyl.webp' alt='music albumn cover' className="vinyl-image" />
       </div>
+
+      <div className="main-container">
+        <div></div>
+            <button onClick={() => navigate('/roomBuilder')}> Join </button>
+      </div>
+
+      <AudioPlayer/>
+
     </section>
   );
 };

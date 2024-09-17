@@ -1,11 +1,11 @@
 @font-face {
     font-family: 'Fox';
-    src: url('Fonts/FoxAndBower.otf') format('opentype');
+    src: url('./Fonts/FoxAndBower.otf') format('opentype');
   }
   
   @font-face {
     font-family: 'Sonora';
-    src: url('Fonts/Sonorous-Rough.otf') format('opentype');
+    src: url('./Fonts/Sonorous-Rough.otf') format('opentype');
   }
   
   * {
@@ -13,37 +13,47 @@
     padding: 0;
     box-sizing: border-box;
   }
+
+  body { overflow: hidden;}
   
   .auth {
-    background-color: #1e1e1e;
     display: grid;
     grid-template-columns: 1fr 1fr;
-    border-radius: 1rem;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    gap: 6vw;
+    text-align: center;
+    max-width: 100vh;
+  }
+
+  .auth .main-container {
+    position: relative;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.078);
+    backdrop-filter: blur(10px);
     padding-block: 3vh;
     padding-inline: 3vw;
-    max-width: 800px;
-    width: 100%;
-    text-align: center;
+    height: 100vh;
+    background: linear-gradient(to top, #1e1e1e, #121212);
+    opacity: 90%;
+    display: grid;
+
+    grid-template-rows: 10fr 1fr 1fr;
   }
-  
+
   /* Button styling */
   .auth button {
     font-family: 'Fox', sans-serif;
-    color: #ffffff;
+    color: #000000;
     border: none;
     padding: 1rem;
     border-radius: 1rem;
     cursor: pointer;
     font-size: 1rem;
     transition: .5s;
-
-
-    background-color: #6d0000;
+    background-color: #ffffff;
+    transform: scale(1.4);
   }
   
   .auth button:hover {
-    transform: scale(1.05);
+    transform: scale(1);
   }
   
   .auth input {
@@ -63,16 +73,186 @@
   }
   
   .auth h3 {
+    position: absolute;
+    z-index: 12;
+    left: 0; 
+    right: 0; 
+    top:  2vh;
+    font-size: 3vh;
+    margin-inline: auto; 
+    width: fit-content;
+    border-radius: 4px;
+    padding: 1rem;
     margin-top: 0;
     color: #ffffff;
+    letter-spacing: 5px;
+    font-family: 'Fox', sans-serif;
   }
 
- .auth .google-button {
-    margin: 1vh;
-  }
 
-  .google-icon {
-    font-size: 20px; /* Adjust size as needed */
-    margin-right: 0.5rem;
-  }
+  .vinyl {
+    position: absolute;
+    left: 0; 
+    right: 0; 
+    top: 0;
+    bottom: 20%;
+    margin: auto; 
+    width: 50vh;
+    height: 50vh;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 2vw solid #121212;
+    cursor: pointer;
+    z-index: 10;
+}
 
+.vinyl-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 3vh;
+    height: 3vh;
+    background-color: #121212;
+    border: #1e1e1e 1px solid;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+.vinyl-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  animation: rotate 10s linear infinite;
+  z-index: 0;
+}
+
+.vinyl-grooves {
+  position: absolute;
+  pointer-events: none;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle, 
+              transparent 40%, 
+              rgba(0, 0, 0, 0.6) 45%, 
+              rgba(0, 0, 0, 0.6) 50%, 
+              transparent 55%),
+              radial-gradient(circle, 
+              transparent 55%, 
+              rgba(0, 0, 0, 0.4) 60%, 
+              rgba(0, 0, 0, 0.4) 65%, 
+              transparent 70%),
+              radial-gradient(circle, 
+              transparent 70%, 
+              rgba(0, 0, 0, 0.3) 75%, 
+              rgba(0, 0, 0, 0.3) 80%, 
+              transparent 85%);
+  background-size: 100%;
+  background-repeat: repeat;
+  z-index: 2;
+}
+
+@keyframes rotate {
+  from {
+      transform: rotate(0deg);
+  }
+  to {
+      transform: rotate(360deg);
+  }
+}
+
+/* AudioPlayer.css */
+.audio-controls {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px; /* Adjust space between buttons */
+  top: 68%;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin-inline: auto;
+  width: 300px;
+  z-index: 15;
+  height: min-content;
+}
+
+.audio-controls button {
+  background: none; /* Remove default button background */
+  border: none;     /* Remove default button border */
+  cursor: pointer;  /* Change cursor to pointer */
+  padding-inline: 2vw;    /* Add some padding */
+}
+
+.audio-controls img {
+  width: 48px;      /* Set default image width */
+  height: 48px;     /* Set default image height */
+  filter: invert(100%); /* Make images white */
+}
+
+.progress-bar-container {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: #333;
+  color: white;
+  padding: 10px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+
+.progress-info {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 5px;
+}
+
+.track-name, .track-artist, .track-time {
+  font-size: 14px;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 5px;
+  background-color: #555;
+  position: relative;
+}
+
+.progress {
+  height: 100%;
+  background-color: #ffffff; /* Customize color */
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+canvas {
+  position: fixed;           /* Make the canvas fixed to fill the viewport */
+  left: 0;             /* Full viewport width */  
+  bottom: 0;         /* Full viewport height */
+  z-index: -1;               /* Put canvas behind the content */
+  background: transparent !important; /* Transparent background to show the visualizer over content */
+  opacity:0.5;
+  width: 100vw;
+}
+
+.bar {
+  background-color: white; /* Adjust color if needed */
+}
+
+@media (max-width: 768px) {
+  .auth button {
+    transform: scale(1); /* Reset scale to normal on mobile */
+  }
+}

@@ -16,7 +16,17 @@
 
 
 body {
-  background-color: #121212; /* Dark background color */
+  background: linear-gradient(
+    to right,
+    rgba(255, 255, 255, 0.5) 0%,     /* Less opaque dark red */
+    rgba(255, 255, 255, 0.5) 5%,     /* Less opaque dark red */
+    rgba(18, 18, 18, 0.5) 25%,   /* Less opaque dark gray */
+    rgba(18, 18, 18, 0.5) 50%,   /* Less opaque dark gray */
+    rgba(18, 18, 18, 0.5) 75%,   /* Less opaque dark gray */
+    rgba(255, 255, 255, 0.5) 95%,    /* Less opaque dark red */
+    rgba(255, 255, 255, 0.5) 100%    /* Less opaque dark red */
+  );
+  background-color: #121212;
   color: #e0e0e0; /* Light text color */
 }
 
@@ -24,6 +34,6 @@ body {
 .App {
   display: grid;
   place-items: center;
-  min-height: 100vh;
+  height: 100vh;
   font-family: 'Fox', sans-serif;
 }

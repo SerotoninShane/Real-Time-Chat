@@ -24,7 +24,7 @@ const signInWithGoogle = async (navigate) => {
  */
 
 export const GoogleSignInButton = ({ navigate }) => (
-    <button className="google-button" onClick={() => signInWithGoogle(navigate)}>
-      Sign In With Google
+    <button onClick={() => signInWithGoogle(navigate)}>
+      Host
     </button>
   );

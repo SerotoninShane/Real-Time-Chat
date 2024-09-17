@@ -1,0 +1,1 @@
+export { cardsData } from './cardsData';

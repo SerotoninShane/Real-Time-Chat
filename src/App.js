@@ -65,17 +65,13 @@ function App() {
     <div className="App">
       <Routes>
 
-      <Route path="/" element={
-        <Auth onSignIn={() => {}}
-        onGuestSignIn={handleGuestSignIn} />} 
-      />
+      <Route path="/" element={<Auth/>}/>
 
       <Route path="/roomBuilder" element={
         <RoomBuilder
           user={user}
           onRoomCreated={handleRoomCreated}
-          onSignOut={handleSignOut}
-          guestUsername={guestUsername} />} 
+          onSignOut={handleSignOut}/>} 
       />
 
       <Route path="/room" element={

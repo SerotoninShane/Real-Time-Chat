@@ -15,16 +15,16 @@
   }
 
   .roomBuilder {
-    background-color: #1e1e1e;
+    background: linear-gradient(to top, #1e1e1e, #121212);
     display: grid;
     grid-template-columns: 1fr 1fr;
-    border-radius: 1rem;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
     padding-block: 3vh;
     padding-inline: 3vw;
     max-width: 800px;
     width: 100%;
     text-align: center;
+    height: 100%;
   }
 
   .roomBuilder button {
@@ -70,3 +70,39 @@
   .roomBuilder .create-room-button {
     margin-block: 1rem;
   }
+
+
+  .character-selection {
+    display: flex;
+    justify-content: center;
+    margin: 1rem 0;
+  }
+  
+  .selected-icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background-color: #444;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    color: #fff;
+  }
+  
+  .icon-carousel {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+  }
+  
+  .carousel-icon {
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+  }
+  
+  .carousel-icon.active {
+    transform: scale(1.2);
+  }
+  
